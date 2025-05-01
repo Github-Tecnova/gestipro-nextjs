@@ -1,0 +1,119 @@
+// This is your Prisma schema file
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Client {
+  id          String     @id @default(uuid())
+  firstName   String
+  lastName    String
+  email       String     @unique
+  phone       String
+  documents   Document[]
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  leases      Lease[]
+  requests    Request[]
+  events      Event[]
+}
+
+model Building {
+  id           String    @id @default(uuid())
+  name         String
+  address      String
+  city         String
+  postalCode   String
+  country      String
+  floors       Int
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  units        Unit[]
+}
+
+model Unit {
+  id           String    @id @default(uuid())
+  reference    String
+  area         Float
+  floor        Int
+  type         String    // T1, T2, T3, etc.
+  status       String    // available, occupied
+  buildingId   String
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  
+  building     Building  @relation(fields: [buildingId], references: [id])
+  leases       Lease[]
+  requests     Request[]
+  events       Event[]
+}
+
+model Lease {
+  id           String     @id @default(uuid())
+  startDate    DateTime
+  endDate      DateTime
+  rent         Float
+  expenses     Float
+  status       String     // active, terminated, pending
+  documents    Document[]
+  clientId     String
+  unitId       String
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+  
+  client       Client     @relation(fields: [clientId], references: [id])
+  unit         Unit       @relation(fields: [unitId], references: [id])
+}
+
+model Request {
+  id           String     @id @default(uuid())
+  type         String     // renovation, repair, etc.
+  description  String
+  status       String     // new, in_progress, completed
+  documents    Document[]
+  clientId     String
+  unitId       String
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+  
+  client       Client     @relation(fields: [clientId], references: [id])
+  unit         Unit       @relation(fields: [unitId], references: [id])
+}
+
+model Event {
+  id           String     @id @default(uuid())
+  type         String     // visit, signature, reminder
+  title        String
+  description  String?
+  startDate    DateTime
+  endDate      DateTime
+  clientId     String?
+  unitId       String?
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+  
+  client       Client?    @relation(fields: [clientId], references: [id])
+  unit         Unit?      @relation(fields: [unitId], references: [id])
+}
+
+model Document {
+  id           String     @id @default(uuid())
+  name         String
+  fileUrl      String
+  fileKey      String
+  type         String
+  size         Int
+  clientId     String?
+  leaseId      String?
+  requestId    String?
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+  
+  client       Client?    @relation(fields: [clientId], references: [id])
+  lease        Lease?     @relation(fields: [leaseId], references: [id])
+  request      Request?   @relation(fields: [requestId], references: [id])
+}
