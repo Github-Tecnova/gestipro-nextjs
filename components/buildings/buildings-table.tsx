@@ -33,7 +33,8 @@ const buildings = [
     floors: 6,
     totalUnits: 24,
     occupiedUnits: 21,
-    maintenanceRequests: 3
+    maintenanceRequests: 3,
+    occupancyRate: 88
   },
   {
     id: "2",
@@ -45,7 +46,8 @@ const buildings = [
     floors: 4,
     totalUnits: 16,
     occupiedUnits: 12,
-    maintenanceRequests: 1
+    maintenanceRequests: 1,
+    occupancyRate: 75
   },
   {
     id: "3",
@@ -57,7 +59,8 @@ const buildings = [
     floors: 3,
     totalUnits: 9,
     occupiedUnits: 9,
-    maintenanceRequests: 2
+    maintenanceRequests: 2,
+    occupancyRate: 100
   },
   {
     id: "4",
@@ -69,7 +72,8 @@ const buildings = [
     floors: 5,
     totalUnits: 20,
     occupiedUnits: 15,
-    maintenanceRequests: 4
+    maintenanceRequests: 4,
+    occupancyRate: 75
   },
   {
     id: "5",
@@ -81,15 +85,13 @@ const buildings = [
     floors: 4,
     totalUnits: 12,
     occupiedUnits: 11,
-    maintenanceRequests: 0
+    maintenanceRequests: 0,
+    occupancyRate: 92
   }
 ];
 
 
 export function BuildingsTable() {
-  function calculateOccupancyRate(occupied: number, total: number) {
-    return Math.round((occupied / total) * 100);
-  }
 
   return (
     <div className="rounded-md border">
@@ -106,8 +108,7 @@ export function BuildingsTable() {
         </TableHeader>
         <TableBody>
           {buildings.map((building) => {
-            const occupancyRate = calculateOccupancyRate(building.occupiedUnits, building.totalUnits);
-            
+
             return (
               <TableRow key={building.id}>
                 <TableCell className="font-medium">
@@ -142,9 +143,11 @@ export function BuildingsTable() {
                 <TableCell className="max-w-[150px]">
                   <div className="space-y-1">
                     <div className="flex items-center justify-between text-sm">
-                      <span>{occupancyRate}%</span>
+                      <span>{building.occupancyRate}%</span>
                     </div>
-                    <Progress value={occupancyRate} className="h-2" />
+
+                    <Progress value={building.occupancyRate} />
+
                   </div>
                 </TableCell>
                 <TableCell className="text-center">

@@ -48,7 +48,7 @@ const units = [
   { id: "3", number: "Apt 304", buildingId: "3" },
 ];
 
-// Form schemas
+// Schémas de validation Zod
 const clientSchema = z.object({
   firstName: z.string().min(1, "Le prénom est requis"),
   lastName: z.string().min(1, "Le nom est requis"),
@@ -87,6 +87,7 @@ const buildingSchema = z.object({
   buildingType: z.enum(["residential", "commercial", "mixed"]),
 });
 
+// Types
 type ItemType = "client" | "lease" | "unit" | "building";
 
 interface AddItemFormProps {
@@ -96,26 +97,28 @@ interface AddItemFormProps {
 }
 
 export function AddItemForm({ type, onSubmit, onCancel }: AddItemFormProps) {
-  const schema = type === "client"
-    ? clientSchema
-    : type === "lease" 
-    ? leaseSchema 
-    : type === "unit" 
-    ? unitSchema 
-    : buildingSchema;
+  // Déduction dynamique du schéma selon le type
+  const schema = (() => {
+    if (type === "client") return clientSchema;
+    if (type === "lease") return leaseSchema;
+    if (type === "unit") return unitSchema;
+    return buildingSchema;
+  })();
 
-  const form = useForm({
+  type FormType = z.infer<typeof schema>;
+
+  const form = useForm<FormType>({
     resolver: zodResolver(schema),
-    defaultValues: {},
   });
 
-  const title = type === "client"
-    ? "Nouveau Client"
-    : type === "lease" 
-    ? "Nouveau Bail" 
-    : type === "unit" 
-    ? "Nouvelle Unité" 
-    : "Nouveau Bâtiment";
+  const title =
+      type === "client"
+          ? "Nouveau Client"
+          : type === "lease"
+              ? "Nouveau Bail"
+              : type === "unit"
+                  ? "Nouvelle Unité"
+                  : "Nouveau Bâtiment";
 
   return (
     <Card className="w-full max-w-2xl mx-auto">
