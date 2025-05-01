@@ -2,11 +2,11 @@
 
 import { useEffect, useState } from "react";
 import { Calendar, dateFnsLocalizer } from "react-big-calendar";
-import format from "date-fns/format";
+import { format } from "date-fns/format";
 import parse from "date-fns/parse";
 import startOfWeek from "date-fns/startOfWeek";
 import getDay from "date-fns/getDay";
-import fr from "date-fns/locale/fr";
+import { fr } from "date-fns/locale";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -139,7 +139,7 @@ export default function CalendarPage() {
             <ChevronLeft className="h-4 w-4" />
           </Button>
           <Button size="sm" variant="outline" onClick={goToToday}>
-            Aujourd'hui
+            Aujourd&apos;hui
           </Button>
           <Button size="sm" variant="outline" onClick={goToNext}>
             <ChevronRight className="h-4 w-4" />
